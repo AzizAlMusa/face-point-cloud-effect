@@ -9,25 +9,9 @@ document.body.appendChild(renderer.domElement);
 const light = new THREE.AmbientLight(0xffffff);
 scene.add(light);
 
-/*
-const geometry = new THREE.BufferGeometry();
-// create a simple square shape. We duplicate the top left and bottom right
-// vertices because each vertex needs to appear once per triangle.
-const vertices = new Float32Array( [
-    -1.0, -1.0,  1.0,
-     1.0, -1.0,  1.0,
-     1.0,  1.0,  1.0,
-    -1.0,  1.0,  1.0,
 
-] );
-
-// itemSize = 3 because there are 3 values (components) per vertex
-geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
-const material = new THREE.PointsMaterial( { color: 0x00ff00, size: 0.01 } );
-const mesh = new THREE.Points( geometry, material );
-scene.add(mesh)
-*/
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
+/*
 controls.dampingFactor = 0.25;
 controls.screenSpacePanning = true;
 controls.minDistance = 40;
@@ -40,7 +24,7 @@ controls.rotateSpeed = 0.7;
 controls.enablePan = false;
 controls.autoRotate = true;
 controls.autoRotateSpeed = 2.0;
-
+*/
 var loader = new THREE.GLTFLoader();
 loader.load("model/scan2.glb", function (gltf) {
     var scale = 1;
@@ -61,13 +45,22 @@ loader.load("model/scan2.glb", function (gltf) {
     material.blending = THREE.AdditiveBlending;
     var mesh = new THREE.Points(geometry, material);
     center = mesh.geometry.boundingSphere.center;
+    mesh.rotation.set(Math.PI/2, 0, 0);
+
+    var sphere = new THREE.SphereGeometry(mesh.geometry.boundingSphere.radius, 32, 32);
+    
+    
+    sphereMesh = new THREE.Mesh(sphere, new THREE.MeshLambertMaterial( { color: 0xff0000} ));
+    sphereMesh.position.set(center);
+    console.log(sphereMesh);
     //camera.lookAt(center);
     //center.x -= 0.03;
     //center.y += 0;
     //scanPoints = new THREE.Points(scan.geometry, pointsMaterial)
     //scan.material.color = 0x00ff00;
-    scene.add(scan);
-    console.log(scan);
+    scene.add(sphereMesh);
+    scene.add(mesh);
+    console.log(mesh);
     //scene.children[1].material.blending = THREE.AdditiveBlending;
     //console.log(scan.geometry.attributes.position.array);
 });
